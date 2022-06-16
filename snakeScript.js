@@ -18,16 +18,17 @@ var apple = {
 	radius: 10,
 	status: 1,
 	color: "red",
-	draw: function() {
-		if (apple.status == 1) {
-			ctx.beginPath();
-			ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2, false);
-			ctx.fillStyle = this.color;
-			ctx.fill();
-			ctx.closePath();
-		}
-	}
 };
+
+function drawApple() {
+	if (apple.status == 1) {
+		ctx.beginPath();
+		ctx.arc(apple.x, apple.y, apple.radius, 0, Math.PI*2, false);
+		ctx.fillStyle = apple.color;
+		ctx.fill();
+		ctx.closePath();
+	}
+}
 
 var score = {
 	x: 3,
@@ -141,10 +142,10 @@ var movement = setInterval(startGame, 150);
 
 function startGame() {
 	clearCanvas();
-	drawSnake();
-	move();
 	setBounds();
-	apple.draw();
+	drawSnake();
+	drawApple();
 	score.draw();
+	move();
 	eatApple();
 }
