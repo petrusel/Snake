@@ -18,17 +18,16 @@ var apple = {
 	radius: 10,
 	status: 1,
 	color: "red",
-};
-
-function drawApple() {
-	if (apple.status == 1) {
+	draw: function() {
+		if (apple.status == 1) {
 		ctx.beginPath();
 		ctx.arc(apple.x, apple.y, apple.radius, 0, Math.PI*2, false);
 		ctx.fillStyle = apple.color;
 		ctx.fill();
 		ctx.closePath();
+		}
 	}
-}
+};
 
 var score = {
 	x: 3,
@@ -71,14 +70,18 @@ function drawSnake() {
 	}
 }
 
+function randomApple() {
+	apple.x = Math.floor(Math.random() * (canvas.width - 2 * apple.radius)) + apple.radius;
+	apple.y = Math.floor(Math.random() * (canvas.height - 2 * apple.radius)) + apple.radius;
+	apple.status = 1;
+}
+
 function eatApple() {
 	if (apple.x + 10 > snake[0].x && apple.x < snake[0].x + 20 && apple.y + 10 > snake[0].y && apple.y < snake[0].y + 20) {
 		++score.value;
 		//
 		apple.status = 0;
-		apple.x = Math.floor(Math.random() * (canvas.width - 2 * apple.radius)) + apple.radius;
-		apple.y = Math.floor(Math.random() * (canvas.height - 2 * apple.radius)) + apple.radius;
-		apple.status = 1;	
+		randomApple();	
 	} else if (left || down || right || up) {
 		snake.pop();
 	}
@@ -144,7 +147,7 @@ function startGame() {
 	clearCanvas();
 	setBounds();
 	drawSnake();
-	drawApple();
+	apple.draw();
 	score.draw();
 	move();
 	eatApple();
