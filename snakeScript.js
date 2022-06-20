@@ -1,18 +1,10 @@
 
-var canvas = document.getElementById('canvas');
-var ctx = canvas.getContext("2d");
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext("2d");
 
-var left = false;
-var down = false;
-var right = false;
-var up = false;
+let snake = [{x:70, y: 190}, {x: 50, y: 190}, {x: 30, y: 190}];
 
-var vertical = 0;
-var horizontal = 0;
-
-var snake = [{x:70, y: 190}, {x: 50, y: 190}, {x: 30, y: 190}];
-
-var apple = {
+let apple = {
 	x: 300,
 	y: 200,
 	radius: 10,
@@ -29,7 +21,7 @@ var apple = {
 	}
 };
 
-var score = {
+let score = {
 	x: 3,
 	y: 15,
 	value: 0,
@@ -43,8 +35,8 @@ var score = {
 };
 
 function setBounds() {
-	const marginLeft = snake[0].x + horizontal < 0;
-	const marginUp = snake[0].y + vertical < 0;
+	const marginLeft = snake[0].x < 0;
+	const marginUp = snake[0].y < 0;
 	const marginRight = snake[0].x > canvas.width;
 	const marginDown = snake[0].y > canvas.height;
 	if (marginLeft || marginUp || marginRight || marginDown) {
@@ -70,7 +62,7 @@ function drawSnake() {
 	}
 }
 
-function randomApple() {
+function radomApple() {
 	apple.x = Math.floor(Math.random() * (canvas.width - 2 * apple.radius)) + apple.radius;
 	apple.y = Math.floor(Math.random() * (canvas.height - 2 * apple.radius)) + apple.radius;
 	apple.status = 1;
@@ -79,76 +71,38 @@ function randomApple() {
 function eatApple() {
 	if (apple.x + 10 > snake[0].x && apple.x < snake[0].x + 20 && apple.y + 10 > snake[0].y && apple.y < snake[0].y + 20) {
 		++score.value;
-		//
+		score.draw();
 		apple.status = 0;
-		randomApple();	
-	} else if (left || down || right || up) {
+		radomApple();	
+	} else {
 		snake.pop();
 	}
 }
 
-function move() {
-	const snakeHead = {x: snake[0].x + horizontal, y: snake[0].y + vertical};
-	if (left) {
-		vertical = 0;
+function directionMove(e) {
+	let horizontal = 0;
+	let vertical = 0;
+	if (e.keyCode == 37) {
 		horizontal = -20;
-		snake.unshift(snakeHead);
-	}
-	if (down) {
+	} else if (e.keyCode == 38) {
 		vertical = -20;
-		horizontal = 0;
-		snake.unshift(snakeHead);
-	}
-	if (right) {
-		vertical = 0;
+	} else if (e.keyCode == 39) {
 		horizontal = 20;
-		snake.unshift(snakeHead);
-	}
-	if (up) {
+	} else if (e.keyCode == 40) {
 		vertical = 20;
-		horizontal = 0;
-		snake.unshift(snakeHead);
-	}
-}
-
-document.addEventListener("keydown", direction, false);
-
-function direction(e) {
-	if (e.keyCode == 37 && !right) {
-		left = true;
-		down = false;
-		right = false;
-		up = false;
-	}
-	if (e.keyCode == 38 && !up) {
-		left = false;
-		down = true;
-		right = false;
-		up = false;
-	}
-	if (e.keyCode == 39 && !left) {
-		left = false;
-		down = false;
-		right = true;
-		up = false;
-	}
-	if (e.keyCode == 40 && !down) {
-		left = false;
-		down = false;
-		right = false;
-		up = true;
 	}
 	e.preventDefault();
+	const snakeHead = {x: snake[0].x + horizontal, y: snake[0].y + vertical};
+	snake.unshift(snakeHead);
 }
 
-var movement = setInterval(startGame, 150);
+let movement = setInterval(startGame, 150);
 
 function startGame() {
 	clearCanvas();
 	setBounds();
 	drawSnake();
 	apple.draw();
-	score.draw();
-	move();
+	directionMove();
 	eatApple();
 }
